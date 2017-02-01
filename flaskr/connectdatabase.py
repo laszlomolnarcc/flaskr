@@ -2,6 +2,7 @@ from peewee import *
 
 
 class ConnectDatabase:
+
     def get_connect_string():
         try:
             with open('connect_str.txt', "r") as db_name:

@@ -1,4 +1,4 @@
-from connectdatabase import ConnectDatabase
+from flaskr.connectdatabase import ConnectDatabase
 from peewee import *
 
 

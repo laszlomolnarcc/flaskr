@@ -1,8 +1,8 @@
 # all the imports
 import os
 from peewee import *
-from connectdatabase import ConnectDatabase
-from models import *
+from flaskr.connectdatabase import ConnectDatabase
+from flaskr.models import Entries
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, current_app
 
@@ -79,10 +79,10 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
-with app.app_context():
-    init_db()
-    print(current_app.name + ' started')
+# with app.app_context():
+#    init_db()
+#    print(current_app.name + ' started')
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#    app.run(debug=True)
