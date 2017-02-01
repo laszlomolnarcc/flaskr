@@ -1,8 +1,11 @@
 # all the imports
 import os
-import sqlite3
+from peewee import *
+from connectdatabase import ConnectDatabase
+from models import *
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-    render_template, flash
+    render_template, flash, current_app
+
 
 app = Flask(__name__)  # create the application instance :)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
@@ -17,18 +20,9 @@ app.config.update(dict(
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
 
-def connect_db():
-    """Connects to the specific database."""
-    rv = sqlite3.connect(app.config['DATABASE'])
-    rv.row_factory = sqlite3.Row
-    return rv
-
-
 def init_db():
-    db = get_db()
-    with app.open_resource('schema.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
+    ConnectDatabase.db.connect()
+    ConnectDatabase.db.create_tables([Entries], safe=True)
 
 
 @app.cli.command('initdb')
@@ -38,27 +32,16 @@ def initdb_command():
     print('Initialized the database.')
 
 
-def get_db():
-    """Opens a new database connection if there is none yet for the
-    current application context.
-    """
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
-
-
 @app.teardown_appcontext
 def close_db(error):
     """Closes the database again at the end of the request."""
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
+    if hasattr(g, 'postgre_db'):
+        g.postgre_db.close()
 
 
 @app.route('/')
 def show_entries():
-    db = get_db()
-    cur = db.execute('select title, text from entries order by id desc')
-    entries = cur.fetchall()
+    entries = Entries.select()
     return render_template('show_entries.html', entries=entries)
 
 
@@ -66,10 +49,9 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    db = get_db()
-    db.execute('insert into entries (title, text) values (?, ?)',
-               [request.form['title'], request.form['text']])
-    db.commit()
+    new_entry = Entries.create(title=request.form['title'],
+                               text=request.form['text'])
+    new_entry.save()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
@@ -96,3 +78,11 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
+
+with app.app_context():
+    init_db()
+    print(current_app.name + ' started')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
