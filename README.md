@@ -9,22 +9,23 @@ but made with peewee as ORM. You are welcome. :)
 # How it works?
 
 1. clone this git repository (obviously)
-2. go to the directory where this README.md is located what you are reading now
-3. run this command:
+1. edit the `connect_str.txt` and put your database name into it (delete the placeholder text)
+1. go to the directory where this README.md is located what you are reading now
+1. run this command:
 
 `sudo pip3 install --editable .`
 
-4. If it runs without error (means: no red text), run these:
+5. If it runs without error (means: no red text), run these:
 
 `export FLASK_APP=flaskr`
 
 `export FLASK_DEBUG=true`
 
-5. create the database with this command:
+6. create the database with this command:
 
 `flask initdb`
 
-6. finally, start the application:
+7. finally, start the application:
 
 `flask run`
 
