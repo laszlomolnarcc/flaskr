@@ -78,11 +78,3 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
-
-# with app.app_context():
-#    init_db()
-#    print(current_app.name + ' started')
-
-
-# if __name__ == "__main__":
-#    app.run(debug=True)
