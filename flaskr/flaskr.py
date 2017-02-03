@@ -41,7 +41,7 @@ def close_db(error):
 
 @app.route('/')
 def show_entries():
-    entries = Entries.select()
+    entries = Entries.select().order_by(Entries.id.desc())
     return render_template('show_entries.html', entries=entries)
 
 
